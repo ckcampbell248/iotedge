@@ -1947,7 +1947,7 @@ function Set-ListenConnectUri([string] $ManagementUri, [string] $WorkloadUri) {
 }
 
 function Set-GatewayAddress {
-    $dockerVersion = Get-ItemProperty "HKLM:\Software\Microsoft\Windows\CurrentVersion\Uninstall\Docker Desktop" |  Select-Object DisplayVersion
+    $dockerVersion = (Get-ItemProperty "HKLM:\Software\Microsoft\Windows\CurrentVersion\Uninstall\Docker Desktop" |  Select-Object DisplayVersion).DisplayVersion
 
     if ($dockerVersion -ge "2.2.0.0") {
         $gatewayAddress = (Get-NetIpAddress |
