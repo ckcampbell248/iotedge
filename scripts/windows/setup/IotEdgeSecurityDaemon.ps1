@@ -1947,8 +1947,16 @@ function Set-ListenConnectUri([string] $ManagementUri, [string] $WorkloadUri) {
 }
 
 function Set-GatewayAddress {
-    $gatewayAddress = (Get-NetIpAddress |
-            Where-Object {$_.InterfaceAlias -like '*vEthernet (DockerNAT)*' -and $_.AddressFamily -eq 'IPv4'}).IPAddress
+    $dockerVersion = Get-ItemProperty "HKLM:\Software\Microsoft\Windows\CurrentVersion\Uninstall\Docker Desktop" |  Select-Object DisplayVersion
+
+    if ($dockerVersion -ge "2.2.0.0") {
+        $gatewayAddress = (Get-NetIpAddress |
+        Where-Object {$_.InterfaceAlias -like '*vEthernet (Default Switch)*' -and $_.AddressFamily -eq 'IPv4'}).IPAddress
+    }
+    else {
+        $gatewayAddress = (Get-NetIpAddress |
+        Where-Object {$_.InterfaceAlias -like '*vEthernet (DockerNAT)*' -and $_.AddressFamily -eq 'IPv4'}).IPAddress
+    }
 
     Set-ListenConnectUri `
         -ManagementUri "http://${gatewayAddress}:15580" `
